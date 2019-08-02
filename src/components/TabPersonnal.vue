@@ -5,16 +5,20 @@
     </div>
     <div class="col float-left mt-2">
       <div class="row">
-        <input type="checkbox" class="mb-2 ml-2 mt-4" />
-        <span class="mt-4 ml-2">En Congés</span>
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input ml-2 mt-5" id="customCheck1" />
+          <label class="custom-control-label mt-4 ml-2" for="customCheck1">En Congés</label>
+        </div>
       </div>
       <div class="row">
-        <input type="checkbox" class="mt-2 ml-2" />
-        <span class="mt-2 ml-2">Disponibles</span>
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input mb-2 ml-2" id="customCheck2" />
+          <label class="custom-control-label ml-2" for="customCheck2">Disponibles</label>
+        </div>
       </div>
     </div>
     <div class="col float-left ml-2 mt-4">
-      <div class="row float-left mt-2">
+      <div class="row float-left mt-4">
         <a @click="$router.push({name: 'AddPersonnal'})">
           <font-awesome-icon icon="plus-circle" style="font-size: 2.3em; color:orange;" />
         </a>
@@ -23,7 +27,7 @@
     </div>
     <table class="table table-bordered table-hover mt-4 text-center col-8 offset-2">
       <thead>
-        <tr class="bg-primary">
+        <tr class="bg-info">
           <th>Prénom :</th>
           <th>Nom :</th>
           <th>Profession :</th>
