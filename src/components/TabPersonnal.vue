@@ -33,6 +33,7 @@
           <th>Profession :</th>
           <th>Service :</th>
           <th>Congés :</th>
+          <th>Supprimer</th>
         </tr>
       </thead>
       <tbody>
@@ -42,6 +43,9 @@
           <td>Ingénieur</td>
           <td>Industrie</td>
           <td @click.stop="$router.push({name: 'ListVacation'})" class="bg-danger">18 jours</td>
+          <td @click.stop>
+            <font-awesome-icon icon="times" style="font-size: 1.2em; color:red;" />
+          </td>
         </tr>
         <tr>
           <td>Marc</td>
@@ -49,6 +53,9 @@
           <td>Commercial</td>
           <td>Automobile</td>
           <td class="bg-success">10 jours</td>
+          <td @click.stop>
+            <font-awesome-icon icon="times" style="font-size: 1.2em; color:red;" />
+          </td>
         </tr>
       </tbody>
     </table>

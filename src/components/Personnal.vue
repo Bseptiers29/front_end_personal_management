@@ -5,7 +5,11 @@
     </div>
     <form class="mt-4 form-group mr-5">
       <div class>
-        <img src="../assets/img/Moi.png" class="rounded float-right col-2 mr-5 img-thumbnail" alt />
+        <img
+          src="../assets/img/imgDefault.png"
+          class="rounded float-right col-2 mr-5 img-thumbnail"
+          alt
+        />
       </div>
       <div class="row offset-1">
         <div class="col-6 mt-3">
