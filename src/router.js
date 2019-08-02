@@ -16,12 +16,12 @@ export default new Router({
       component: TabPersonnal
     },
     {
-      path: "/personnal",
+      path: "/personnel",
       name: "AddPersonnal",
       component: Personnal
     },
     {
-      path: "/list",
+      path: "/congés",
       name: "ListVacation",
       component: ListVacation
     }
