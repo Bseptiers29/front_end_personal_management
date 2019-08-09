@@ -1,7 +1,7 @@
 <template>
   <div class="mt-4">
     <div class="row mt-3">
-      <p class="h1 text-right col-10 text-info">Modifier un membre du personnel</p>
+      <p class="h1 text-right col-10 text-info">Ajouter un membre du personnel</p>
     </div>
     <form class="mt-4 form-group mr-5" @submit.prevent>
       <div class>
@@ -105,11 +105,7 @@
         </div>
       </div>
       <div class="row offset-2 mt-3">
-        <button
-          type="submit"
-          class="btn btn-info mt-5 col-1 ml-5"
-          @click="updatePersonnel(id)"
-        >Ajouter</button>
+        <button type="submit" class="btn btn-info mt-5 col-1 ml-5" @click="postPersonnel()">Ajouter</button>
         <button
           type="submit"
           class="btn btn-warning mt-5 col-1 ml-5"
@@ -142,45 +138,15 @@ export default {
       }
     };
   },
-  created() {
-    this.getPersonnel();
-  },
-  watch: {
-    $route: function() {
-      this.getPersonnel();
-    }
-  },
-  props: {
-    id: String
-  },
   methods: {
     handleFiles: function() {
       var fichierSelectionne = document.getElementById("file").files[0];
       console.log(fichierSelectionne);
       this.image = fichierSelectionne;
     },
-    getPersonnel: async function(id) {
-      try {
-        let response = await fetch(
-          `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnel/${this.id}`
-        );
-        let result = await response.json();
-        (this.prenom = result.prenom),
-          (this.nom = result.nom),
-          (this.anciennete = result.anciennete),
-          (this.date_naissance = result.date_naissance),
-          (this.email = result.email),
-          (this.profession = result.profession),
-          (this.service = result.service),
-          (this.image = result.image),
-          (this.conges = result.congesdispo);
-      } catch (err) {
-        console.log(err.message);
-      }
-    },
-    updatePersonnel: async function(id) {
+    postPersonnel: async function() {
       let response = await fetch(
-        `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnel/${this.id}`,
+        `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnel`,
         {
           body: JSON.stringify({
             prenom: this.prenom,
@@ -189,11 +155,13 @@ export default {
             email: this.email,
             profession: this.profession,
             service: this.service,
-            image: this.image,
+            image: this.image.name,
             date_naissance: this.date_naissance,
-            congesdispo: this.conges
+            congesdispo: this.conges,
+            debutconges: null,
+            finconges: null
           }),
-          method: "PUT",
+          method: "POST",
           headers: this.headers
         }
       );

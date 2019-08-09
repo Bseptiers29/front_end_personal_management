@@ -3,6 +3,7 @@ import Router from "vue-router";
 import TabPersonnal from "./components/TabPersonnal";
 import Personnal from "./components/Personnal";
 import ListVacation from "./components/ListVacation";
+import AddPersonnal from "./components/AddPersonnal";
 
 Vue.use(Router);
 
@@ -16,14 +17,21 @@ export default new Router({
       component: TabPersonnal
     },
     {
-      path: "/personnel",
-      name: "AddPersonnal",
-      component: Personnal
+      path: "/personnel/:id",
+      name: "UpdatePersonnal",
+      component: Personnal,
+      props: true
     },
     {
-      path: "/congés",
+      path: "/congés/:id",
       name: "ListVacation",
-      component: ListVacation
+      component: ListVacation,
+      props: true
+    },
+    {
+      path: "/personnel/add",
+      name: "AddPersonnal",
+      component: AddPersonnal
     }
   ]
 });
