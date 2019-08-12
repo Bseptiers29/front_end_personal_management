@@ -1,10 +1,10 @@
 <template>
   <div class="mt-4">
     <div class="row mt-3">
-      <p class="h1 text-right col-10 text-info">Ajouter un membre du personnel</p>
+      <p class="h1 text-right col-10 text-info">Modifier un membre du personnel</p>
     </div>
     <form class="mt-4 form-group mr-5" @submit.prevent>
-      <div class>
+      <div id="imgpersos">
         <img
           src="../assets/img/imgDefault.png"
           class="rounded float-right col-2 mr-5 img-thumbnail"
@@ -29,17 +29,17 @@
       </div>
       <div class="row offset-1">
         <div class="col-6 mt-3">
-          <label for="inputCongésDisp">Congés Disponibles :</label>
+          <label for="inputSécuDisp">N° Sécurité Sociale :</label>
           <input
             type="number"
             class="form-control"
-            id="inputCongésDisp"
-            placeholder="Congés"
-            v-model="conges"
+            id="inputSécuDisp"
+            placeholder="N° Sécurité Sociale"
+            v-model="sécusociale"
           />
         </div>
         <div class="col-6 mt-3">
-          <label for="inputAncienneté">Ancienneté</label>
+          <label for="inputAncienneté">Ancienneté :</label>
           <input
             type="date"
             class="form-control"
@@ -51,7 +51,7 @@
       </div>
       <div class="row offset-1">
         <div class="col-6 mt-3">
-          <label for="inputAge">Age :</label>
+          <label for="inputAge">Date de naissance :</label>
           <input
             type="date"
             class="form-control"
@@ -73,6 +73,28 @@
       </div>
       <div class="row offset-1">
         <div class="col-6 mt-3">
+          <label for="inputAdresse">Adresse :</label>
+          <input
+            type="text"
+            class="form-control"
+            id="inputAdresse"
+            placeholder="Adresse"
+            v-model="adresse"
+          />
+        </div>
+        <div class="col-6 mt-3">
+          <label for="inputTelephone">Téléphone :</label>
+          <input
+            type="number"
+            class="form-control"
+            id="inputTelephone"
+            placeholder="Telephone"
+            v-model="telephone"
+          />
+        </div>
+      </div>
+      <div class="row offset-1" id="entrpgroup">
+        <div class="col-5 mt-3">
           <label for="inputProfession">Proféssion :</label>
           <input
             type="text"
@@ -82,8 +104,8 @@
             v-model="profession"
           />
         </div>
-        <div class="col-6 mt-3">
-          <label for="inputService">Service</label>
+        <div class="col-5 mt-3">
+          <label for="inputService">Service :</label>
           <input
             type="text"
             class="form-control"
@@ -104,11 +126,11 @@
           </div>
         </div>
       </div>
-      <div class="row offset-2 mt-3">
-        <button type="submit" class="btn btn-info mt-5 col-1 ml-5" @click="postPersonnel()">Ajouter</button>
+      <div class="row offset-2" id="buttongroup">
+        <button type="submit" class="btn btn-info col-1 ml-5" @click="postPersonnel()">Ajouter</button>
         <button
           type="submit"
-          class="btn btn-warning mt-5 col-1 ml-5"
+          class="btn btn-warning col-1 ml-5"
           @click="$router.push({name: 'TabPersonnal' })"
         >Annuler</button>
       </div>
@@ -117,6 +139,15 @@
 </template>
 
 <style class="scoped">
+#entrpgroup {
+  width: 87%;
+}
+#form_end {
+  margin-top: -15vh;
+}
+#buttongroup {
+  margin-top: 17vh;
+}
 </style>
 
 <script>
@@ -126,10 +157,12 @@ export default {
     return {
       prenom: null,
       nom: null,
-      conges: null,
+      sécusociale: null,
       anciennete: null,
       date_naissance: null,
       email: null,
+      adresse: null,
+      telephone: null,
       profession: null,
       service: null,
       image: null,
@@ -146,25 +179,26 @@ export default {
     },
     postPersonnel: async function() {
       let response = await fetch(
-        `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnel`,
+        `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnels`,
         {
           body: JSON.stringify({
-            prenom: this.prenom,
-            nom: this.nom,
-            anciennete: this.anciennete,
-            email: this.email,
-            profession: this.profession,
-            service: this.service,
-            image: this.image.name,
-            date_naissance: this.date_naissance,
-            congesdispo: this.conges,
-            debutconges: null,
-            finconges: null
+            Prenom: this.prenom,
+            Nom: this.nom,
+            SecuriteSociale: this.sécusociale,
+            Anciennete: this.anciennete,
+            Date_naissance: this.date_naissance,
+            Email: this.email,
+            Adresse: this.adresse,
+            Telephone: this.telephone,
+            Profession: this.profession,
+            Service: this.service,
+            Image: this.image.name
           }),
           method: "POST",
           headers: this.headers
         }
       );
+      this.$router.push({ name: "TabPersonnal" });
     }
   }
 };

@@ -13,7 +13,7 @@
           <th scope="col">Prénom :</th>
           <th scope="col">Nom :</th>
           <th scope="col">Proféssion :</th>
-          <th scope="col">Congés :</th>
+          <th scope="col">Service :</th>
         </tr>
       </thead>
       <tbody>
@@ -21,11 +21,17 @@
           <td>{{prenom}}</td>
           <td>{{nom}}</td>
           <td>{{profession}}</td>
-          <td>{{conges}}</td>
+          <td>{{service}}</td>
         </tr>
       </tbody>
     </table>
     <form @submit.prevent>
+      <div class="row mt-5">
+        <div class="col-2 offset-1">
+          <label>Ajoutez des Congés :</label>
+          <input type="number" class="form-control" v-model="conges" />
+        </div>
+      </div>
       <div class="row mt-5">
         <div class="col offset-2">
           <label>En Congés du :</label>
@@ -36,9 +42,9 @@
           <input type="date" class="form-control col-4" v-model="finconges" />
         </div>
       </div>
-      <div class="row offset-3">
+      <div class="row offset-4">
         <div class="mt-4 ml-5 col">
-          <input class="btn-info btn mx-auto col-2" type="submit" @click="updatePersonnel(id)" />
+          <input class="btn-info btn mx-auto col-2" type="submit" @click="postConges()" />
         </div>
       </div>
     </form>
@@ -77,11 +83,9 @@ export default {
       prenom: null,
       nom: null,
       anciennete: null,
-      email: null,
       profession: null,
       service: null,
       image: null,
-      date_naissance: null,
       conges: null,
       debutconges: null,
       finconges: null,
@@ -92,64 +96,87 @@ export default {
   },
   created() {
     this.getPersonnel();
+    this.getConges();
   },
   watch: {
     $route: function() {
       this.getPersonnel();
+      this.getConges();
     }
   },
   props: {
-    id: String
+    id: String,
+    idc: String
   },
   methods: {
     getPersonnel: async function(id) {
       try {
         let response = await fetch(
-          `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnel/${this.id}`
+          `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnels/${this.id}`
         );
         let result = await response.json();
-        (this.prenom = result.prenom),
-          (this.nom = result.nom),
-          (this.anciennete = result.anciennete),
-          (this.email = result.email),
-          (this.profession = result.profession),
-          (this.service = result.service),
-          (this.image = result.image),
-          (this.date_naissance = result.date_naissance),
-          (this.conges = result.congesdispo),
-          (this.debutconges = result.debutconges),
-          (this.finconges = result.finconges);
+        (this.prenom = result.Prenom),
+          (this.nom = result.Nom),
+          (this.anciennete = result.Anciennete),
+          (this.profession = result.Profession),
+          (this.service = result.Service),
+          (this.image = result.Image);
       } catch (err) {
         console.log(err.message);
       }
     },
-    updatePersonnel: async function(id) {
+    getConges: async function(idc) {
+      try {
+        let response = await fetch(
+          `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/conges/${this.idc}`
+        );
+        let result = await response.json();
+        (this.conges = result.CongesDispo),
+          (this.debutconges = result.DebutConges),
+          (this.finconges = result.FinConges);
+      } catch (err) {
+        console.log(err.message);
+      }
+    },
+    postConges: async function() {
       let response = await fetch(
-        `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/conges/${this.id}`,
+        `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/conges`,
         {
           body: JSON.stringify({
-            debutconges: this.debutconges,
-            finconges: this.finconges
+            CongesDispo: this.conges,
+            DebutConges: this.debutconges,
+            FinConges: this.finconges
           }),
-          method: "PUT",
+          method: "POST",
           headers: this.headers
         }
       );
-    },
-    deletePersonnel: async function(id) {
-      let response = await fetch(
-        `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnel/${this.id}`,
-        {
-          method: "DELETE"
-        }
-      );
-      if (await response) {
-        this.getConges();
-      } else {
-        alert("La suppression a échoué");
-      }
-      dateconges: "";
+      this.$router.push({ name: "TabPersonnal" });
     }
+  },
+
+  updateConges: async function(idc) {
+    let response = await fetch(
+      `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/conges/${this.idc}`,
+      {
+        body: JSON.stringify({
+          conges: this.CongesDispo,
+          debutconges: this.DebutConges,
+          finconges: this.FinConges
+        }),
+        method: "PUT",
+        headers: this.headers
+      }
+    );
+    this.$router.push({ name: "TabPersonnal" });
+  },
+  deleteConges: async function(idc) {
+    let response = await fetch(
+      `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/conges/${this.idc}`,
+      {
+        method: "DELETE"
+      }
+    );
   }
 };
 </script>

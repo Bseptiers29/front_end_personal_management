@@ -43,24 +43,29 @@
           <th>Profession :</th>
           <th>Service :</th>
           <th>Congés :</th>
-          <th>Supprimer</th>
+          <th>Editer :</th>
+          <th>Supprimer :</th>
         </tr>
       </thead>
       <tbody>
         <tr
           v-for="(personnel) of result"
           :key="personnel.ID"
-          @click="$router.push({name: 'UpdatePersonnal' ,params : {id: `${personnel.ID}` }})"
+          @click="$router.push({name: 'ListVacation' ,params: {id: `${personnel.Id}` , idc: `${personnel.Id_Conges}`}})"
+          id="userDetails"
         >
-          <td>{{personnel.prenom}}</td>
-          <td>{{personnel.nom}}</td>
-          <td>{{personnel.profession}}</td>
-          <td>{{personnel.service}}</td>
+          <td>{{personnel.Prenom}}</td>
+          <td>{{personnel.Nom}}</td>
+          <td>{{personnel.Profession}}</td>
+          <td>{{personnel.Service}}</td>
+          <td class="bg-danger">{{personnel.congesdispo}}</td>
           <td
-            @click.stop="$router.push({name: 'ListVacation' ,params: {id: `${personnel.ID}`}})"
-            class="bg-danger"
-          >{{personnel.congesdispo}}</td>
-          <td @click.stop="deletePersonnel(personnel.ID)">
+            @click.stop="$router.push({name: 'UpdatePersonnal' ,params : {id: `${personnel.Id}` }})"
+            id="userEdit"
+          >
+            <font-awesome-icon icon="user-edit" style="font-size: 1.2em; color:green;" />
+          </td>
+          <td @click.stop="deletePersonnel(personnel.ID)" id="userDelete">
             <font-awesome-icon icon="times" style="font-size: 1.2em; color:red;" />
           </td>
         </tr>
@@ -72,6 +77,9 @@
 <style class="scoped">
 th {
   color: white;
+}
+#userDetails {
+  cursor: pointer;
 }
 </style>
 <script>
@@ -94,7 +102,7 @@ export default {
     getPersonnels: async function() {
       try {
         let response = await fetch(
-          "http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnel"
+          "http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnels"
         );
         let result = await response.json();
         this.result = result;
@@ -104,7 +112,7 @@ export default {
     },
     deletePersonnel: async function(id) {
       let response = await fetch(
-        `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnel/${id}`,
+        `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnels/${id}`,
         {
           method: "DELETE"
         }
