@@ -1,6 +1,7 @@
 <template>
   <div class="mt-3">
     <div>
+      {{dateActuelle}}
       <img
         src="../assets/img/imgDefault.png"
         class="rounded float-right col-2 mr-5 img-thumbnail"
@@ -39,7 +40,7 @@
         </div>
         <div class="col">
           <label>Au :</label>
-          <input type="date" class="form-control col-4" v-model="finconges" />
+          <input type="date" class="form-control col-4" v-model="finconges" @click="compareDates()" />
         </div>
       </div>
       <div class="row offset-4">
@@ -76,6 +77,11 @@
 </style>
 
 <script>
+import * as moment from "moment";
+import "moment/locale/pt-br";
+
+moment.locale("fr");
+
 export default {
   name: "LisVacation",
   data: function() {
@@ -95,10 +101,12 @@ export default {
       debutconges: null,
       finconges: null,
       idc: null,
+      resultcalc: null,
       headers: {
         "Content-Type": "application/json"
       },
-      result: null
+      result: null,
+      dateActuelle: moment().format("L")
     };
   },
   created() {
@@ -115,6 +123,13 @@ export default {
     id: String
   },
   methods: {
+    compateDates: function() {
+      if (this.finconges < this.dateActuelle) {
+        console.log("La personne est en vacances");
+      } else {
+        console.log("La personne est active");
+      }
+    },
     getPersonnelLeave: async function(id) {
       try {
         let response = await fetch(

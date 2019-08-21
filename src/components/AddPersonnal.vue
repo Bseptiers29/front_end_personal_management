@@ -3,7 +3,13 @@
     <div class="row mt-3">
       <p class="h1 text-right col-10 text-info">Ajouter un membre du personnel</p>
     </div>
-    <form class="mt-4 form-group mr-5" @submit.prevent>
+    <form
+      class="mt-4 form-group mr-5"
+      @submit.prevent
+      action="/profile"
+      method="post"
+      enctype="multipart/form-data"
+    >
       <div id="imgpersos">
         <img
           src="../assets/img/imgDefault.png"
@@ -121,7 +127,13 @@
             <label class="btn btn-default btn-file float-right" for="file">
               <font-awesome-icon icon="plus-circle" style="font-size: 2.3em; color:orange;" />
               <span class="ml-2">Ajouter une photo</span>
-              <input id="file" type="file" style="display: none;" @change="handleFiles()" />
+              <input
+                id="file"
+                type="file"
+                style="display: none;"
+                @change="handleFiles()"
+                name="photoPersonnel"
+              />
             </label>
           </div>
         </div>
