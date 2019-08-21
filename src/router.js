@@ -23,13 +23,13 @@ export default new Router({
       props: true
     },
     {
-      path: "/congés/:id",
+      path: "/conges/:id",
       name: "ListVacation",
       component: ListVacation,
       props: true
     },
     {
-      path: "/personnel/add",
+      path: "/personnel/ajout",
       name: "AddPersonnal",
       component: AddPersonnal
     }

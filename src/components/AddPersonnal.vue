@@ -1,7 +1,7 @@
 <template>
   <div class="mt-4">
     <div class="row mt-3">
-      <p class="h1 text-right col-10 text-info">Modifier un membre du personnel</p>
+      <p class="h1 text-right col-10 text-info">Ajouter un membre du personnel</p>
     </div>
     <form class="mt-4 form-group mr-5" @submit.prevent>
       <div id="imgpersos">
@@ -85,7 +85,7 @@
         <div class="col-6 mt-3">
           <label for="inputTelephone">Téléphone :</label>
           <input
-            type="number"
+            type="text"
             class="form-control"
             id="inputTelephone"
             placeholder="Telephone"
@@ -167,6 +167,7 @@ export default {
       service: null,
       image: null,
       headers: {
+        Accept: "application/json",
         "Content-Type": "application/json"
       }
     };
@@ -179,7 +180,7 @@ export default {
     },
     postPersonnel: async function() {
       let response = await fetch(
-        `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnels`,
+        `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels`,
         {
           body: JSON.stringify({
             Prenom: this.prenom,

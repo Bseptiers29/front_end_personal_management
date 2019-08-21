@@ -49,23 +49,23 @@
       </thead>
       <tbody>
         <tr
-          v-for="(personnel) of result"
-          :key="personnel.ID"
-          @click="$router.push({name: 'ListVacation' ,params: {id: `${personnel.Id}` , idc: `${personnel.Id_Conges}`}})"
+          v-for="(personnel) of resultPersonnel"
+          :key="personnel.Id"
+          @click="$router.push({name: 'ListVacation' ,params: {id: `${personnel.Id}`}})"
           id="userDetails"
         >
           <td>{{personnel.Prenom}}</td>
           <td>{{personnel.Nom}}</td>
           <td>{{personnel.Profession}}</td>
           <td>{{personnel.Service}}</td>
-          <td class="bg-danger">{{personnel.congesdispo}}</td>
+          <td class="bg-success">{{personnel.CongesDispo}}</td>
           <td
             @click.stop="$router.push({name: 'UpdatePersonnal' ,params : {id: `${personnel.Id}` }})"
             id="userEdit"
           >
             <font-awesome-icon icon="user-edit" style="font-size: 1.2em; color:green;" />
           </td>
-          <td @click.stop="deletePersonnel(personnel.ID)" id="userDelete">
+          <td @click.stop="deletePersonnel(personnel.Id)" id="userDelete">
             <font-awesome-icon icon="times" style="font-size: 1.2em; color:red;" />
           </td>
         </tr>
@@ -87,7 +87,7 @@ export default {
   name: "TabPersonnal",
   data: function() {
     return {
-      result: null
+      resultPersonnel: null
     };
   },
   created() {
@@ -102,17 +102,17 @@ export default {
     getPersonnels: async function() {
       try {
         let response = await fetch(
-          "http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnels"
+          "http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels"
         );
         let result = await response.json();
-        this.result = result;
+        this.resultPersonnel = result;
       } catch (err) {
         console.log(err.message);
       }
     },
     deletePersonnel: async function(id) {
       let response = await fetch(
-        `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnels/${id}`,
+        `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${id}`,
         {
           method: "DELETE"
         }

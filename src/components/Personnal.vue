@@ -85,7 +85,7 @@
         <div class="col-6 mt-3">
           <label for="inputTelephone">Téléphone :</label>
           <input
-            type="number"
+            type="text"
             class="form-control"
             id="inputTelephone"
             placeholder="Telephone"
@@ -165,6 +165,7 @@ export default {
       telephone: null,
       profession: null,
       service: null,
+      conges: null,
       image: null,
       headers: {
         "Content-Type": "application/json"
@@ -191,7 +192,7 @@ export default {
     getPersonnel: async function(id) {
       try {
         let response = await fetch(
-          `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnels/${this.id}`
+          `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`
         );
         let result = await response.json();
         (this.prenom = result.Prenom),
@@ -204,14 +205,15 @@ export default {
           (this.telephone = result.Telephone),
           (this.profession = result.Profession),
           (this.service = result.Service),
-          (this.image = result.Image);
+          (this.conges = result.CongesDispo);
+        this.image = result.Image;
       } catch (err) {
         console.log(err.message);
       }
     },
     updatePersonnel: async function(id) {
       let response = await fetch(
-        `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnels/${this.id}`,
+        `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`,
         {
           body: JSON.stringify({
             Prenom: this.prenom,
@@ -224,6 +226,7 @@ export default {
             Telephone: this.telephone,
             Profession: this.profession,
             Service: this.service,
+            CongesDispo: this.conges,
             Image: this.image
           }),
           method: "PUT",

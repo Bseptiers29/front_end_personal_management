@@ -54,10 +54,10 @@
       <span class="float-right text-right font-weight-light" id="grpancien">{{anciennete}}</span>
     </div>
     <p class="h4 text-left col-10 text-info mt-5">Liste des congés du personnel</p>
-    <ul class="list-group list-group-flush col-3 ml-5" v-if="debutconges">
+    <ul class="list-group list-group-flush col-3 ml-5" v-for="(conge) of result" :key="conge.Idc">
       <li class="list-group-item">
-        Du : {{debutconges}} - Au : {{finconges}}
-        <a @click="deletePersonnel(id)">
+        Du : {{conge.DebutConges}} - Au : {{conge.FinConges}}
+        <a @click="deleteConges(conge.Idc)">
           <font-awesome-icon class="ml-5" icon="times" style="font-size: 1.2em; color:red;" />
         </a>
       </li>
@@ -70,7 +70,7 @@
   margin-left: 33em;
 }
 #grpancien {
-  margin-top: -4vh;
+  margin-top: -10vh;
   margin-right: 7vh;
 }
 </style>
@@ -82,101 +82,121 @@ export default {
     return {
       prenom: null,
       nom: null,
+      sécusociale: null,
       anciennete: null,
+      date_naissance: null,
+      email: null,
+      adresse: null,
+      telephone: null,
       profession: null,
       service: null,
       image: null,
       conges: null,
       debutconges: null,
       finconges: null,
+      idc: null,
       headers: {
         "Content-Type": "application/json"
-      }
+      },
+      result: null
     };
   },
   created() {
+    this.getPersonnelLeave();
     this.getPersonnel();
-    this.getConges();
   },
   watch: {
     $route: function() {
+      this.getPersonnelLeave();
       this.getPersonnel();
-      this.getConges();
     }
   },
   props: {
-    id: String,
-    idc: String
+    id: String
   },
   methods: {
+    getPersonnelLeave: async function(id) {
+      try {
+        let response = await fetch(
+          `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels_conges/${this.id}`
+        );
+        let result = await response.json();
+        this.result = result;
+      } catch (err) {
+        console.log(err.message);
+      }
+    },
     getPersonnel: async function(id) {
       try {
         let response = await fetch(
-          `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/personnels/${this.id}`
+          `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`
         );
         let result = await response.json();
         (this.prenom = result.Prenom),
           (this.nom = result.Nom),
+          (this.sécusociale = result.SecuriteSociale),
           (this.anciennete = result.Anciennete),
+          (this.date_naissance = result.Date_naissance),
+          (this.email = result.Email),
+          (this.adresse = result.Adresse),
+          (this.telephone = result.Telephone),
           (this.profession = result.Profession),
           (this.service = result.Service),
-          (this.image = result.Image);
+          (this.conges = result.CongesDispo);
+        this.image = result.Image;
       } catch (err) {
         console.log(err.message);
       }
     },
-    getConges: async function(idc) {
-      try {
-        let response = await fetch(
-          `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/conges/${this.idc}`
-        );
-        let result = await response.json();
-        (this.conges = result.CongesDispo),
-          (this.debutconges = result.DebutConges),
-          (this.finconges = result.FinConges);
-      } catch (err) {
-        console.log(err.message);
+    deleteConges: async function(id) {
+      let response = await fetch(
+        `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/conges/${id}`,
+        {
+          method: "DELETE"
+        }
+      );
+      if (await response) {
+        this.getPersonnelLeave(this.id);
+      } else {
+        alert("La suppression a échoué");
       }
     },
     postConges: async function() {
       let response = await fetch(
-        `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/conges`,
+        `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/conges`,
         {
           body: JSON.stringify({
-            CongesDispo: this.conges,
             DebutConges: this.debutconges,
-            FinConges: this.finconges
+            FinConges: this.finconges,
+            ID_Personnel: this.id
           }),
           method: "POST",
           headers: this.headers
         }
       );
+      let res = await fetch(
+        `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`,
+        {
+          body: JSON.stringify({
+            Prenom: this.prenom,
+            Nom: this.nom,
+            SecuriteSociale: this.sécusociale,
+            Anciennete: this.anciennete,
+            Date_naissance: this.date_naissance,
+            Email: this.email,
+            Adresse: this.adresse,
+            Telephone: this.telephone,
+            Profession: this.profession,
+            Service: this.service,
+            CongesDispo: this.conges,
+            Image: this.image
+          }),
+          method: "PUT",
+          headers: this.headers
+        }
+      );
       this.$router.push({ name: "TabPersonnal" });
     }
-  },
-
-  updateConges: async function(idc) {
-    let response = await fetch(
-      `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/conges/${this.idc}`,
-      {
-        body: JSON.stringify({
-          conges: this.CongesDispo,
-          debutconges: this.DebutConges,
-          finconges: this.FinConges
-        }),
-        method: "PUT",
-        headers: this.headers
-      }
-    );
-    this.$router.push({ name: "TabPersonnal" });
-  },
-  deleteConges: async function(idc) {
-    let response = await fetch(
-      `http://app-25aa53e5-cf91-4429-82b4-66bc31bc8731.cleverapps.io/v1/conges/${this.idc}`,
-      {
-        method: "DELETE"
-      }
-    );
   }
 };
 </script>
