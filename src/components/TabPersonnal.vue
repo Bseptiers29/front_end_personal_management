@@ -10,7 +10,9 @@
             type="checkbox"
             class="custom-control-input ml-2 mt-5"
             id="customCheck1"
-            onClick="console.log('En Congés')"
+            @change="checkConges($event)"
+            @blur="checkOut()"
+            v-model="enConges"
           />
           <label class="custom-control-label mt-4 ml-2" for="customCheck1">En Congés</label>
         </div>
@@ -21,7 +23,9 @@
             type="checkbox"
             class="custom-control-input mb-2 ml-2"
             id="customCheck2"
-            onClick="console.log('Disponibles')"
+            @change="checkDispo($event)"
+            @blur="checkOut()"
+            v-model="dispo"
           />
           <label class="custom-control-label ml-2" for="customCheck2">Disponibles</label>
         </div>
@@ -38,7 +42,7 @@
     <table class="table table-bordered table-hover mt-4 text-center col-8 offset-2">
       <thead>
         <tr class="bg-info">
-          <th>Prénom :</th>
+          <th id="try">Prénom :</th>
           <th>Nom :</th>
           <th>Profession :</th>
           <th>Service :</th>
@@ -58,7 +62,7 @@
           <td>{{personnel.Nom}}</td>
           <td>{{personnel.Profession}}</td>
           <td>{{personnel.Service}}</td>
-          <td class="bg-success">{{personnel.CongesDispo}}</td>
+          <td class="persosStatus">{{personnel.Status}}</td>
           <td
             @click.stop="$router.push({name: 'UpdatePersonnal' ,params : {id: `${personnel.Id}` }})"
             id="userEdit"
@@ -87,8 +91,15 @@ export default {
   name: "TabPersonnal",
   data: function() {
     return {
-      resultPersonnel: null
+      resultPersonnel: null,
+      enConges: false,
+      dispo: false,
+      dispoClass: "bg-success",
+      congeClass: "bg-danger"
     };
+  },
+  updated() {
+    this.setColorBack();
   },
   created() {
     this.getPersonnels();
@@ -99,6 +110,57 @@ export default {
     }
   },
   methods: {
+    checkOut: function() {
+      this.dispo = false;
+      this.enConges = false;
+      this.getPersonnels();
+    },
+    checkConges: function(event) {
+      if (event.target.checked) {
+        this.filterConges();
+      } else {
+        this.getPersonnels();
+      }
+    },
+    checkDispo: function(event) {
+      if (event.target.checked) {
+        this.filterDispo();
+      } else {
+        this.getPersonnels();
+      }
+    },
+    setColorBack: function() {
+      let element = document.getElementsByClassName("persosStatus");
+      for (let i = 0; i < element.length; i++) {
+        if (element[i].textContent === "Disponible") {
+          element[i].style.backgroundColor = "#28a745";
+        } else if (element[i].textContent === "En Congés") {
+          element[i].style.backgroundColor = "#dc3545";
+        }
+      }
+    },
+    filterConges: function() {
+      this.dispo = false;
+      for (let i = 0; i < this.resultPersonnel.length; i++) {
+        if (this.resultPersonnel[i].Status != "Disponible") {
+          const res = this.resultPersonnel.filter(
+            essai => essai.Status != "Disponible"
+          );
+          this.resultPersonnel = res;
+        }
+      }
+    },
+    filterDispo: function() {
+      this.enConges = false;
+      for (let i = 0; i < this.resultPersonnel.length; i++) {
+        if (this.resultPersonnel[i].Status != "En Congés") {
+          const res = this.resultPersonnel.filter(
+            essai => essai.Status != "En Congés"
+          );
+          this.resultPersonnel = res;
+        }
+      }
+    },
     getPersonnels: async function() {
       try {
         let response = await fetch(

@@ -6,8 +6,8 @@
     <form
       class="mt-4 form-group mr-5"
       @submit.prevent
-      action="/profile"
-      method="post"
+      action="/files"
+      method="POST"
       enctype="multipart/form-data"
     >
       <div id="imgpersos">
@@ -132,7 +132,7 @@
                 type="file"
                 style="display: none;"
                 @change="handleFiles()"
-                name="photoPersonnel"
+                name="profiles"
               />
             </label>
           </div>
@@ -178,6 +178,7 @@ export default {
       profession: null,
       service: null,
       image: null,
+      status: "Disponible",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
@@ -187,8 +188,8 @@ export default {
   methods: {
     handleFiles: function() {
       var fichierSelectionne = document.getElementById("file").files[0];
-      console.log(fichierSelectionne);
       this.image = fichierSelectionne;
+      console.log(this.image);
     },
     postPersonnel: async function() {
       let response = await fetch(
@@ -196,7 +197,7 @@ export default {
         {
           body: JSON.stringify({
             Prenom: this.prenom,
-            Nom: this.nom,
+            Nom: this.nom.toUpperCase(),
             SecuriteSociale: this.sécusociale,
             Anciennete: this.anciennete,
             Date_naissance: this.date_naissance,
@@ -205,10 +206,21 @@ export default {
             Telephone: this.telephone,
             Profession: this.profession,
             Service: this.service,
-            Image: this.image.name
+            Image: this.image.name,
+            Status: this.status
           }),
           method: "POST",
           headers: this.headers
+        }
+      );
+      let formData = new FormData();
+
+      formData.append("profiles", this.image);
+      let res = await fetch(
+        `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/files`,
+        {
+          method: "POST",
+          body: formData
         }
       );
       this.$router.push({ name: "TabPersonnal" });

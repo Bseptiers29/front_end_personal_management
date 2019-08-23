@@ -1,11 +1,11 @@
 <template>
   <div class="mt-3">
     <div>
-      {{dateActuelle}}
       <img
-        src="../assets/img/imgDefault.png"
+        v-bind:src="this.Url+ this.image"
         class="rounded float-right col-2 mr-5 img-thumbnail"
-        alt
+        alt="photo du personnel"
+        id="imgpersos"
       />
     </div>
     <table class="table col-8 text-center ml-5">
@@ -40,7 +40,7 @@
         </div>
         <div class="col">
           <label>Au :</label>
-          <input type="date" class="form-control col-4" v-model="finconges" @click="compareDates()" />
+          <input type="date" class="form-control col-4" v-model="finconges" />
         </div>
       </div>
       <div class="row offset-4">
@@ -80,7 +80,7 @@
 import * as moment from "moment";
 import "moment/locale/pt-br";
 
-moment.locale("fr");
+moment.locale("eu");
 
 export default {
   name: "LisVacation",
@@ -97,11 +97,12 @@ export default {
       profession: null,
       service: null,
       image: null,
+      status: null,
       conges: null,
       debutconges: null,
       finconges: null,
-      idc: null,
-      resultcalc: null,
+      Url:
+        "http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/images/",
       headers: {
         "Content-Type": "application/json"
       },
@@ -123,11 +124,23 @@ export default {
     id: String
   },
   methods: {
-    compateDates: function() {
-      if (this.finconges < this.dateActuelle) {
-        console.log("La personne est en vacances");
+    setCongesDispo: function() {
+      let d1 = this.debutconges.split("-").join("");
+      let d2 = this.finconges.split("-").join("");
+      let res = d2 - d1;
+      this.conges - res;
+      console.log(conges);
+    },
+    setStatus: function() {
+      if (
+        this.dateActuelle < this.finconges &&
+        this.dateActuelle > this.debutconges
+      ) {
+        this.status = "En Congés";
+        console.log(this.status);
       } else {
-        console.log("La personne est active");
+        this.status = "Disponible";
+        console.log(this.status);
       }
     },
     getPersonnelLeave: async function(id) {
@@ -157,8 +170,9 @@ export default {
           (this.telephone = result.Telephone),
           (this.profession = result.Profession),
           (this.service = result.Service),
-          (this.conges = result.CongesDispo);
-        this.image = result.Image;
+          (this.conges = result.CongesDispo),
+          (this.image = result.Image),
+          (this.status = result.Status);
       } catch (err) {
         console.log(err.message);
       }
@@ -177,40 +191,74 @@ export default {
       }
     },
     postConges: async function() {
-      let response = await fetch(
-        `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/conges`,
-        {
-          body: JSON.stringify({
-            DebutConges: this.debutconges,
-            FinConges: this.finconges,
-            ID_Personnel: this.id
-          }),
-          method: "POST",
-          headers: this.headers
-        }
-      );
-      let res = await fetch(
-        `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`,
-        {
-          body: JSON.stringify({
-            Prenom: this.prenom,
-            Nom: this.nom,
-            SecuriteSociale: this.sécusociale,
-            Anciennete: this.anciennete,
-            Date_naissance: this.date_naissance,
-            Email: this.email,
-            Adresse: this.adresse,
-            Telephone: this.telephone,
-            Profession: this.profession,
-            Service: this.service,
-            CongesDispo: this.conges,
-            Image: this.image
-          }),
-          method: "PUT",
-          headers: this.headers
-        }
-      );
-      this.$router.push({ name: "TabPersonnal" });
+      this.setStatus();
+      var d1 = this.debutconges;
+      var d2 = this.finconges;
+      if (d1 > d2) {
+        alert(
+          "Les dates entrées ne sont pas valide, veuillez modifier vos champs"
+        );
+      } else if (d1 == null && d2 == null) {
+        let res = await fetch(
+          `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`,
+          {
+            body: JSON.stringify({
+              Prenom: this.prenom,
+              Nom: this.nom,
+              SecuriteSociale: this.sécusociale,
+              Anciennete: this.anciennete,
+              Date_naissance: this.date_naissance,
+              Email: this.email,
+              Adresse: this.adresse,
+              Telephone: this.telephone,
+              Profession: this.profession,
+              Service: this.service,
+              CongesDispo: this.conges,
+              Image: this.image,
+              Status: this.status
+            }),
+            method: "PUT",
+            headers: this.headers
+          }
+        );
+        this.$router.push({ name: "TabPersonnal" });
+      } else {
+        let response = await fetch(
+          `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/conges`,
+          {
+            body: JSON.stringify({
+              DebutConges: this.debutconges,
+              FinConges: this.finconges,
+              ID_Personnel: this.id
+            }),
+            method: "POST",
+            headers: this.headers
+          }
+        );
+        let res = await fetch(
+          `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`,
+          {
+            body: JSON.stringify({
+              Prenom: this.prenom,
+              Nom: this.nom,
+              SecuriteSociale: this.sécusociale,
+              Anciennete: this.anciennete,
+              Date_naissance: this.date_naissance,
+              Email: this.email,
+              Adresse: this.adresse,
+              Telephone: this.telephone,
+              Profession: this.profession,
+              Service: this.service,
+              CongesDispo: this.conges,
+              Image: this.image,
+              Status: this.status
+            }),
+            method: "PUT",
+            headers: this.headers
+          }
+        );
+        this.$router.push({ name: "TabPersonnal" });
+      }
     }
   }
 };
