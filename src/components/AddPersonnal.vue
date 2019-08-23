@@ -189,7 +189,6 @@ export default {
     handleFiles: function() {
       var fichierSelectionne = document.getElementById("file").files[0];
       this.image = fichierSelectionne;
-      console.log(this.image);
     },
     postPersonnel: async function() {
       let response = await fetch(

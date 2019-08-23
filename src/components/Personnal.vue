@@ -190,7 +190,7 @@ export default {
   methods: {
     handleFiles: function() {
       var fichierSelectionne = document.getElementById("file").files[0];
-      console.log(fichierSelectionne);
+
       this.image = fichierSelectionne;
     },
     getPersonnel: async function() {
@@ -211,9 +211,7 @@ export default {
           (this.service = result.Service),
           (this.conges = result.CongesDispo);
         this.image = result.Image;
-      } catch (err) {
-        console.log(err.message);
-      }
+      } catch (err) {}
     },
     updatePersonnel: async function() {
       let response = await fetch(

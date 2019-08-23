@@ -168,9 +168,7 @@ export default {
         );
         let result = await response.json();
         this.resultPersonnel = result;
-      } catch (err) {
-        console.log(err.message);
-      }
+      } catch (err) {}
     },
     deletePersonnel: async function(id) {
       let response = await fetch(

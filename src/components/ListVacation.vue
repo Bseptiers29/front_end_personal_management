@@ -129,7 +129,6 @@ export default {
       let d2 = this.finconges.split("-").join("");
       let res = d2 - d1;
       this.conges - res;
-      console.log(conges);
     },
     setStatus: function() {
       if (
@@ -137,10 +136,8 @@ export default {
         this.dateActuelle > this.debutconges
       ) {
         this.status = "En Congés";
-        console.log(this.status);
       } else {
         this.status = "Disponible";
-        console.log(this.status);
       }
     },
     getPersonnelLeave: async function(id) {
@@ -150,9 +147,7 @@ export default {
         );
         let result = await response.json();
         this.result = result;
-      } catch (err) {
-        console.log(err.message);
-      }
+      } catch (err) {}
     },
     getPersonnel: async function(id) {
       try {
@@ -173,9 +168,7 @@ export default {
           (this.conges = result.CongesDispo),
           (this.image = result.Image),
           (this.status = result.Status);
-      } catch (err) {
-        console.log(err.message);
-      }
+      } catch (err) {}
     },
     deleteConges: async function(id) {
       let response = await fetch(
