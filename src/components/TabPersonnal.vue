@@ -168,7 +168,9 @@ export default {
         );
         let result = await response.json();
         this.resultPersonnel = result;
-      } catch (err) {}
+      } catch (err) {
+        return alert("Erreur lors de la connexion a la base de données.");
+      }
     },
     deletePersonnel: async function(id) {
       let response = await fetch(

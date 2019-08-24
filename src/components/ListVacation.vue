@@ -71,7 +71,7 @@
   margin-left: 33em;
 }
 #grpancien {
-  margin-top: -10vh;
+  margin-top: -9vh;
   margin-right: 7vh;
 }
 </style>
@@ -168,7 +168,9 @@ export default {
           (this.conges = result.CongesDispo),
           (this.image = result.Image),
           (this.status = result.Status);
-      } catch (err) {}
+      } catch (err) {
+        return alert("Erreur lors de la connexion a la base de données.");
+      }
     },
     deleteConges: async function(id) {
       let response = await fetch(

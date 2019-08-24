@@ -190,7 +190,6 @@ export default {
   methods: {
     handleFiles: function() {
       var fichierSelectionne = document.getElementById("file").files[0];
-
       this.image = fichierSelectionne;
     },
     getPersonnel: async function() {
@@ -229,7 +228,7 @@ export default {
             Profession: this.profession,
             Service: this.service,
             CongesDispo: this.conges,
-            Image: this.image.name,
+            Image: this.image,
             Status: this.status
           }),
           method: "PUT",
