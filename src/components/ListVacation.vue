@@ -140,7 +140,7 @@ export default {
         this.status = "Disponible";
       }
     },
-    getPersonnelLeave: async function(id) {
+    getPersonnelLeave: async function() {
       try {
         let response = await fetch(
           `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels_conges/${this.id}`
@@ -149,7 +149,7 @@ export default {
         this.result = result;
       } catch (err) {}
     },
-    getPersonnel: async function(id) {
+    getPersonnel: async function() {
       try {
         let response = await fetch(
           `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`
