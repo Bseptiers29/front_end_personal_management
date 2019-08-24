@@ -128,7 +128,7 @@
         </div>
       </div>
       <div class="row offset-2" id="buttongroup">
-        <button type="submit" class="btn btn-info col-1 ml-5" @click="updatePersonnel()">Ajouter</button>
+        <button type="submit" class="btn btn-info col-1 ml-5" @click="updatePersonnel()">Modifier</button>
         <button
           type="submit"
           class="btn btn-warning col-1 ml-5"
@@ -168,7 +168,7 @@ export default {
       service: null,
       conges: null,
       image: null,
-      status: "Disponible",
+      status: null,
       Url:
         "http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/images/",
       headers: {
@@ -208,9 +208,12 @@ export default {
           (this.telephone = result.Telephone),
           (this.profession = result.Profession),
           (this.service = result.Service),
-          (this.conges = result.CongesDispo);
-        this.image = result.Image;
-      } catch (err) {}
+          (this.conges = result.CongesDispo),
+          (this.image = result.Image),
+          (this.status = result.Status);
+      } catch (err) {
+        return alert("Erreur lors de la connexion a la base de données.");
+      }
     },
     updatePersonnel: async function() {
       let response = await fetch(
@@ -218,7 +221,7 @@ export default {
         {
           body: JSON.stringify({
             Prenom: this.prenom,
-            Nom: this.nom,
+            Nom: this.nom.toUpperCase(),
             SecuriteSociale: this.sécusociale,
             Anciennete: this.anciennete,
             Date_naissance: this.date_naissance,

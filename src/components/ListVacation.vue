@@ -43,10 +43,13 @@
           <input type="date" class="form-control col-4" v-model="finconges" />
         </div>
       </div>
-      <div class="row offset-4">
-        <div class="mt-4 ml-5 col">
-          <input class="btn-info btn mx-auto col-2" type="submit" @click="postConges()" />
-        </div>
+      <div class="row offset-2" id="buttongroup">
+        <button type="submit" class="btn btn-info col-2" @click="postConges()">Ajouter</button>
+        <button
+          type="submit"
+          class="btn btn-warning col-2 ml-5"
+          @click="$router.push({name: 'TabPersonnal' })"
+        >Annuler</button>
       </div>
     </form>
     <div class="col-1 float-right" id="grpancien">
@@ -147,7 +150,9 @@ export default {
         );
         let result = await response.json();
         this.result = result;
-      } catch (err) {}
+      } catch (err) {
+        return alert("Erreur lors de la connexion a la base de données.");
+      }
     },
     getPersonnel: async function() {
       try {
