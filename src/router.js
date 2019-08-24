@@ -17,7 +17,7 @@ export default new Router({
       component: TabPersonnal
     },
     {
-      path: "/personnel/:id",
+      path: "/personnel/modifier/:id",
       name: "UpdatePersonnal",
       component: Personnal,
       props: true
