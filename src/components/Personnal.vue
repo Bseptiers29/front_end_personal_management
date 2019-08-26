@@ -168,6 +168,7 @@ export default {
       service: null,
       conges: null,
       image: null,
+      imageObj: null,
       status: null,
       Url:
         "http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/images/",
@@ -190,7 +191,8 @@ export default {
   methods: {
     handleFiles: function() {
       var fichierSelectionne = document.getElementById("file").files[0];
-      this.image = fichierSelectionne;
+      this.imageObj = fichierSelectionne;
+      this.image = fichierSelectionne.name;
     },
     getPersonnel: async function() {
       try {
@@ -240,7 +242,7 @@ export default {
       );
       let formData = new FormData();
 
-      formData.append("profiles", this.image);
+      formData.append("profiles", this.imageObj);
       let res = await fetch(
         `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/files`,
         {
