@@ -60,12 +60,12 @@
     <div class="col-1 float-right" id="grpancien">
       <p class="float-right text-right font-weight-bold" id="grpancien">Ancienneté</p>
       <br />
-      <span class="float-right text-right font-weight-light" id="grpancien">{{anciennete}}</span>
+      <span class="float-right text-right font-weight-light" id="grpancien">{{moment(anciennete).format('DD-MM-YYYY')}}</span>
     </div>
     <p class="h4 text-left col-10 text-info mt-5">Liste des congés du personnel</p>
     <ul class="list-group list-group-flush col-3 ml-5" v-for="(conge) of result" :key="conge.Idc">
       <li class="list-group-item">
-        Du : {{conge.DebutConges}} - Au : {{conge.FinConges}}
+        Du : {{moment(conge.DebutConges).format('DD-MM-YYYY')}} - Au : {{moment(conge.FinConges).format('DD-MM-YYYY')}}
         <a @click="deleteConges(conge.Idc)">
           <font-awesome-icon class="ml-5" icon="times" style="font-size: 1.2em; color:red;" />
         </a>
