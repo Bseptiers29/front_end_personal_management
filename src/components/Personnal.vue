@@ -1,7 +1,7 @@
 <template>
   <div class="mt-4">
     <div class="row mt-3">
-      <p class="h1 text-right col-10 text-info">Modifier un membre du personnel</p>
+      <p class="h1 text-right col-10 text-info">Modifier le membre du personnel {{prenom}} {{nom}}</p>
     </div>
     <div id="imgDiv">
       <img
@@ -251,11 +251,12 @@ export default {
       }
       if (this.image === "") {
         this.errors.push("Image requise");
-      } else {
+      }
+      if(!this.errors.length) {
       this.updatePersonnel();
       }
     },
-    handleFiles: function() {
+    handleFiles: async function() {
       var fichierSelectionne = document.getElementById("file").files[0];
       this.imageObj = fichierSelectionne;
       this.image = fichierSelectionne.name;
@@ -265,12 +266,22 @@ export default {
         );
       } else {
         return alert(`Le fichier a bien été selectionné : ${this.image}`);
+        let formData = new FormData();
+
+        formData.append("profiles", this.imageObj);
+        let res = await fetch(
+          `https://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/files`,
+        {
+          method: "POST",
+          body: formData
+        }
+      );
       }
     },
     getPersonnel: async function() {
       try {
         let response = await fetch(
-          `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`
+          `https://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`
         );
         let result = await response.json();
         (this.prenom = result.Prenom),
@@ -292,7 +303,7 @@ export default {
     },
     updatePersonnel: async function() {
       let response = await fetch(
-        `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`,
+        `https://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`,
         {
           body: JSON.stringify({
             Prenom: this.prenom,
@@ -313,16 +324,7 @@ export default {
           headers: this.headers
         }
       );
-      let formData = new FormData();
-
-      formData.append("profiles", this.imageObj);
-      let res = await fetch(
-        `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/files`,
-        {
-          method: "POST",
-          body: formData
-        }
-      );
+      
       this.$router.push({ name: "TabPersonnal" });
     }
   }

@@ -42,13 +42,13 @@
     <table class="table table-bordered table-hover mt-4 text-center col-8 offset-2">
       <thead>
         <tr class="bg-info">
-          <th id="try">Prénom :</th>
-          <th>Nom :</th>
-          <th>Profession :</th>
-          <th>Service :</th>
-          <th>Congés :</th>
-          <th>Editer :</th>
-          <th>Supprimer :</th>
+          <th scope="col">Prénom :</th>
+          <th scope="col">Nom :</th>
+          <th scope="col">Profession :</th>
+          <th scope="col">Service :</th>
+          <th scope="col">Congés :</th>
+          <th scope="col">Editer :</th>
+          <th scope="col">Supprimer :</th>
         </tr>
       </thead>
       <tbody>
@@ -164,7 +164,7 @@ export default {
     getPersonnels: async function() {
       try {
         let response = await fetch(
-          "http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels"
+          "https://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels"
         );
         let result = await response.json();
         this.resultPersonnel = result;
@@ -179,7 +179,7 @@ export default {
         )
       ) {
         let response = await fetch(
-          `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${id}`,
+          `https://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${id}`,
           {
             method: "DELETE"
           }

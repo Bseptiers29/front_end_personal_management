@@ -209,7 +209,7 @@ export default {
       this.errors = [];
       if (!this.prenom) {
         this.errors.push("Prénom requis");
-      }
+      } 
       if (!this.nom) {
         this.errors.push("Nom requis");
       }
@@ -239,8 +239,9 @@ export default {
       }
       if (!this.image) {
         this.errors.push("Image requise");
-      } else {
-      this.postPersonnel();
+      }
+      if(!this.errors.length) {
+      this.updatePersonnel();
       }
     },
     handleFiles: function() {

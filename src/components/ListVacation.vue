@@ -1,7 +1,7 @@
 <template>
   <div class="mt-3">
     <div class="row mt-3">
-      <p class="h1 text-right col-10 text-info mb-5">Ajouter des congés au personnel</p>
+      <p class="h1 text-right col-10 text-info mb-5">Ajouter des congés au personnel {{prenom}} {{nom}}</p>
     </div>
     <div>
       <img
@@ -88,7 +88,7 @@
 import * as moment from "moment";
 import "moment/locale/pt-br";
 
-moment.locale("fr");
+moment.locale("eu");
 
 export default {
   name: "LisVacation",
@@ -111,7 +111,7 @@ export default {
       debutconges: null,
       finconges: null,
       Url:
-        "http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/images/",
+        "https://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/images/",
       headers: {
         "Content-Type": "application/json"
       },
@@ -171,10 +171,10 @@ export default {
     getPersonnelLeave: async function() {
       try {
         let response = await fetch(
-          `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels_conges/${this.id}`
+          `https://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels_conges/${this.id}`
         );
         let result = await response.json();
-        this.result = result;
+        this.result = result
       } catch (err) {
         return alert("Erreur lors de la connexion a la base de données.");
       }
@@ -182,7 +182,7 @@ export default {
     getPersonnel: async function() {
       try {
         let response = await fetch(
-          `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`
+          `https://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`
         );
         let result = await response.json();
         (this.prenom = result.Prenom),
@@ -203,11 +203,11 @@ export default {
     deleteConges: async function(id) {
         if (
         confirm(
-          "Voulez vous vraiment supprimer cet utilisateur ainsi que tout ces congés?"
+          "Voulez vous vraiment supprimer ces dates de congés?"
         )
       ){
       let response = await fetch(
-        `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/conges/${id}`,
+        `https://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/conges/${id}`,
         {
           method: "DELETE"
         }
@@ -229,7 +229,7 @@ export default {
         );
       } else if (d1 == null && d2 == null) {
         let res = await fetch(
-          `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`,
+          `https://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`,
           {
             body: JSON.stringify({
               Prenom: this.prenom,
@@ -253,7 +253,7 @@ export default {
         this.$router.push({ name: "TabPersonnal" });
       } else {
         let response = await fetch(
-          `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/conges`,
+          `https://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/conges`,
           {
             body: JSON.stringify({
               DebutConges: this.debutconges,
@@ -265,7 +265,7 @@ export default {
           }
         );
         let res = await fetch(
-          `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`,
+          `https://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`,
           {
             body: JSON.stringify({
               Prenom: this.prenom,

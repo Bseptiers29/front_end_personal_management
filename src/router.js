@@ -17,13 +17,13 @@ export default new Router({
       component: TabPersonnal
     },
     {
-      path: "/personnel/modifier/:id",
+      path: "/personnel/modifier/",
       name: "UpdatePersonnal",
       component: Personnal,
       props: true
     },
     {
-      path: "/conges/:id",
+      path: "/conges/",
       name: "ListVacation",
       component: ListVacation,
       props: true
