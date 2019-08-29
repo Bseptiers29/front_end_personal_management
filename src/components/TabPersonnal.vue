@@ -173,16 +173,22 @@ export default {
       }
     },
     deletePersonnel: async function(id) {
-      let response = await fetch(
-        `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${id}`,
-        {
-          method: "DELETE"
+      if (
+        confirm(
+          "Voulez vous vraiment supprimer cet utilisateur ainsi que tout ces congés?"
+        )
+      ) {
+        let response = await fetch(
+          `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${id}`,
+          {
+            method: "DELETE"
+          }
+        );
+        if (await response) {
+          this.getPersonnels();
+        } else {
+          alert("La suppression a échoué");
         }
-      );
-      if (await response) {
-        this.getPersonnels();
-      } else {
-        alert("La suppression a échoué");
       }
     }
   }

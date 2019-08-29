@@ -3,18 +3,18 @@
     <div class="row mt-3">
       <p class="h1 text-right col-10 text-info">Modifier un membre du personnel</p>
     </div>
-    <form class="mt-4 form-group mr-5" @submit.prevent>
-      <div id="imgpersos">
-        <img
-          class="rounded float-right col-2 mr-5 img-thumbnail"
-          alt="image du personnel"
-          v-bind:src="this.Url + this.image"
-          id="imgpersos"
-        />
-      </div>
+    <div id="imgDiv">
+      <img
+        class="rounded float-right col-2 mr-5 img-thumbnail img-fluid. max-width: 100%;"
+        alt="image du personnel"
+        v-bind:src="this.Url + this.image"
+        id="imgpersos"
+      />
+    </div>
+    <form class="mt-4 form-group mr-5" @submit.prevent id="form-style">
       <div class="row offset-1">
         <div class="col-6 mt-3">
-          <label for="inputPrenom">Prénom :</label>
+          <label for="inputPrenom">Prénom* :</label>
           <input
             type="text"
             class="form-control"
@@ -24,13 +24,13 @@
           />
         </div>
         <div class="col-6 mt-3">
-          <label for="inputNom">Nom :</label>
+          <label for="inputNom">Nom* :</label>
           <input type="text" class="form-control" id="inputNom" placeholder="Nom" v-model="nom" />
         </div>
       </div>
       <div class="row offset-1">
         <div class="col-6 mt-3">
-          <label for="inputSécuDisp">N° Sécurité Sociale :</label>
+          <label for="inputSécuDisp">N° Sécurité Sociale* :</label>
           <input
             type="number"
             class="form-control"
@@ -40,7 +40,7 @@
           />
         </div>
         <div class="col-6 mt-3">
-          <label for="inputAncienneté">Ancienneté :</label>
+          <label for="inputAncienneté">Ancienneté* :</label>
           <input
             type="date"
             class="form-control"
@@ -52,7 +52,7 @@
       </div>
       <div class="row offset-1">
         <div class="col-6 mt-3">
-          <label for="inputAge">Date de naissance :</label>
+          <label for="inputAge">Date de naissance* :</label>
           <input
             type="date"
             class="form-control"
@@ -62,7 +62,7 @@
           />
         </div>
         <div class="col-6 mt-3">
-          <label for="inputEmail">Email :</label>
+          <label for="inputEmail">Email* :</label>
           <input
             type="email"
             class="form-control"
@@ -74,7 +74,7 @@
       </div>
       <div class="row offset-1">
         <div class="col-6 mt-3">
-          <label for="inputAdresse">Adresse :</label>
+          <label for="inputAdresse">Adresse* :</label>
           <input
             type="text"
             class="form-control"
@@ -84,7 +84,7 @@
           />
         </div>
         <div class="col-6 mt-3">
-          <label for="inputTelephone">Téléphone :</label>
+          <label for="inputTelephone">Téléphone* :</label>
           <input
             type="text"
             class="form-control"
@@ -96,7 +96,7 @@
       </div>
       <div class="row offset-1" id="entrpgroup">
         <div class="col-5 mt-3">
-          <label for="inputProfession">Proféssion :</label>
+          <label for="inputProfession">Proféssion* :</label>
           <input
             type="text"
             class="form-control"
@@ -105,8 +105,8 @@
             v-model="profession"
           />
         </div>
-        <div class="col-5 mt-3">
-          <label for="inputService">Service :</label>
+        <div class="col-5 mt-3" id="InputService">
+          <label for="inputService">Service* :</label>
           <input
             type="text"
             class="form-control"
@@ -121,14 +121,25 @@
           <div class="col float-right ml-2 mr-5 mt-2">
             <label class="btn btn-default btn-file float-right" for="file">
               <font-awesome-icon icon="plus-circle" style="font-size: 2.3em; color:orange;" />
-              <span class="ml-2">Ajouter une photo</span>
+              <span class="ml-2">Ajouter une photo*</span>
               <input id="file" type="file" style="display: none;" @change="handleFiles()" />
             </label>
+            <div class="col-2 float-right" id="InputConges">
+              <label>Congés :</label>
+              <input
+                type="number"
+                class="form-control"
+                placeholder="Congés"
+                v-model="conges"
+                min="0"
+              />
+            </div>
           </div>
         </div>
       </div>
+      <i class="h6 mt-4 ml-1">* Champs requis</i>
       <div class="row offset-2" id="buttongroup">
-        <button type="submit" class="btn btn-info col-1 ml-5" @click="updatePersonnel()">Modifier</button>
+        <button type="submit" class="btn btn-info col-1 ml-5" @click="checkForm()">Modifier</button>
         <button
           type="submit"
           class="btn btn-warning col-1 ml-5"
@@ -136,6 +147,12 @@
         >Annuler</button>
       </div>
     </form>
+     <p v-if="errors.length">
+      <b style="color :red">Veuillez corriger les erreurs suivantes :</b>
+      <ul>
+        <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+      </ul>
+    </p>
   </div>
 </template>
 
@@ -149,6 +166,16 @@
 #buttongroup {
   margin-top: 17vh;
 }
+#InputConges {
+  margin-right: -20vh;
+  margin-top: 6.6vh;
+}
+#imgpersos {
+  height: 32vh;
+}
+#InputService {
+  margin-left: 1.5vh;
+}
 </style>
 
 <script>
@@ -156,6 +183,7 @@ export default {
   name: "Personnal",
   data: function() {
     return {
+      errors: [],
       prenom: null,
       nom: null,
       sécusociale: null,
@@ -189,10 +217,55 @@ export default {
     id: String
   },
   methods: {
+    checkForm: function() {
+      this.errors = [];
+      if (this.prenom === "") {
+        this.errors.push("Prénom requis");
+      }
+      if (this.nom === "") {
+        this.errors.push("Nom requis");
+      }
+      if (this.sécusociale === "") {
+        this.errors.push("N° de sécurité sociale requis");
+      }
+      if (this.anciennete === "") {
+        this.errors.push("Date de signature de contrat requise");
+      }
+      if (this.date_naissance === "") {
+        this.errors.push("Date de naissance requise");
+      }
+      if (this.email === "") {
+        this.errors.push("Email requis");
+      }
+      if (this.adresse === "") {
+        this.errors.push("Adresse requise");
+      }
+      if (this.telephone === "") {
+        this.errors.push("N° de téléphone requis");
+      }
+      if (this.profession === "") {
+        this.errors.push("Profession requise");
+      }
+      if (this.service === "") {
+        this.errors.push("Service requis");
+      }
+      if (this.image === "") {
+        this.errors.push("Image requise");
+      } else {
+      this.updatePersonnel();
+      }
+    },
     handleFiles: function() {
       var fichierSelectionne = document.getElementById("file").files[0];
       this.imageObj = fichierSelectionne;
       this.image = fichierSelectionne.name;
+      if (!this.image) {
+        return alert(
+          "Une erreur c'est produite pendant la selection de l'image, veuillez réessayer"
+        );
+      } else {
+        return alert(`Le fichier a bien été selectionné : ${this.image}`);
+      }
     },
     getPersonnel: async function() {
       try {

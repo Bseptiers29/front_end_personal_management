@@ -10,7 +10,7 @@
       method="POST"
       enctype="multipart/form-data"
     >
-      <div id="imgpersos">
+      <div id="imgDiv">
         <img
           src="../assets/img/imgDefault.png"
           class="rounded float-right col-2 mr-5 img-thumbnail"
@@ -19,7 +19,7 @@
       </div>
       <div class="row offset-1">
         <div class="col-6 mt-3">
-          <label for="inputPrenom">Prénom :</label>
+          <label for="inputPrenom">Prénom* :</label>
           <input
             type="text"
             class="form-control"
@@ -29,13 +29,13 @@
           />
         </div>
         <div class="col-6 mt-3">
-          <label for="inputNom">Nom :</label>
+          <label for="inputNom">Nom* :</label>
           <input type="text" class="form-control" id="inputNom" placeholder="Nom" v-model="nom" />
         </div>
       </div>
       <div class="row offset-1">
         <div class="col-6 mt-3">
-          <label for="inputSécuDisp">N° Sécurité Sociale :</label>
+          <label for="inputSécuDisp">N° Sécurité Sociale* :</label>
           <input
             type="number"
             class="form-control"
@@ -45,7 +45,7 @@
           />
         </div>
         <div class="col-6 mt-3">
-          <label for="inputAncienneté">Ancienneté :</label>
+          <label for="inputAncienneté">Ancienneté* :</label>
           <input
             type="date"
             class="form-control"
@@ -57,7 +57,7 @@
       </div>
       <div class="row offset-1">
         <div class="col-6 mt-3">
-          <label for="inputAge">Date de naissance :</label>
+          <label for="inputAge">Date de naissance* :</label>
           <input
             type="date"
             class="form-control"
@@ -67,7 +67,7 @@
           />
         </div>
         <div class="col-6 mt-3">
-          <label for="inputEmail">Email :</label>
+          <label for="inputEmail">Email* :</label>
           <input
             type="email"
             class="form-control"
@@ -79,7 +79,7 @@
       </div>
       <div class="row offset-1">
         <div class="col-6 mt-3">
-          <label for="inputAdresse">Adresse :</label>
+          <label for="inputAdresse">Adresse* :</label>
           <input
             type="text"
             class="form-control"
@@ -89,7 +89,7 @@
           />
         </div>
         <div class="col-6 mt-3">
-          <label for="inputTelephone">Téléphone :</label>
+          <label for="inputTelephone">Téléphone* :</label>
           <input
             type="text"
             class="form-control"
@@ -101,7 +101,7 @@
       </div>
       <div class="row offset-1" id="entrpgroup">
         <div class="col-5 mt-3">
-          <label for="inputProfession">Proféssion :</label>
+          <label for="inputProfession">Proféssion* :</label>
           <input
             type="text"
             class="form-control"
@@ -111,7 +111,7 @@
           />
         </div>
         <div class="col-5 mt-3">
-          <label for="inputService">Service :</label>
+          <label for="inputService">Service* :</label>
           <input
             type="text"
             class="form-control"
@@ -126,7 +126,7 @@
           <div class="col float-right ml-2 mr-5 mt-2">
             <label class="btn btn-default btn-file float-right" for="file">
               <font-awesome-icon icon="plus-circle" style="font-size: 2.3em; color:orange;" />
-              <span class="ml-2">Ajouter une photo</span>
+              <span class="ml-2">Ajouter une photo *</span>
               <input
                 id="file"
                 type="file"
@@ -135,11 +135,22 @@
                 name="profiles"
               />
             </label>
+            <div class="col-2 float-right" id="InputConges">
+              <label>Congés :</label>
+              <input
+                type="number"
+                class="form-control"
+                placeholder="Congés Disponibles"
+                v-model="conges"
+                min="0"
+              />
+            </div>
           </div>
         </div>
       </div>
+      <i class="h6 mt-4 ml-1">* Champs requis</i>
       <div class="row offset-2" id="buttongroup">
-        <button type="submit" class="btn btn-info col-1 ml-5" @click="postPersonnel()">Ajouter</button>
+        <button type="submit" class="btn btn-info col-1 ml-5" @click="checkForm()">Ajouter</button>
         <button
           type="submit"
           class="btn btn-warning col-1 ml-5"
@@ -147,6 +158,12 @@
         >Annuler</button>
       </div>
     </form>
+    <p v-if="errors.length">
+      <b style="color :red">Veuillez corriger les erreurs suivantes :</b>
+      <ul>
+        <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+      </ul>
+    </p>
   </div>
 </template>
 
@@ -158,7 +175,7 @@
   margin-top: -15vh;
 }
 #buttongroup {
-  margin-top: 17vh;
+  margin-top: 8vh;
 }
 </style>
 
@@ -167,6 +184,7 @@ export default {
   name: "Personnal",
   data: function() {
     return {
+      errors: [],
       prenom: null,
       nom: null,
       sécusociale: null,
@@ -177,6 +195,7 @@ export default {
       telephone: null,
       profession: null,
       service: null,
+      conges: null,
       image: null,
       status: "Disponible",
       headers: {
@@ -186,9 +205,54 @@ export default {
     };
   },
   methods: {
+    checkForm: function() {
+      this.errors = [];
+      if (!this.prenom) {
+        this.errors.push("Prénom requis");
+      }
+      if (!this.nom) {
+        this.errors.push("Nom requis");
+      }
+      if (!this.sécusociale) {
+        this.errors.push("N° de sécurité sociale requis");
+      }
+      if (!this.anciennete) {
+        this.errors.push("Date de signature de contrat requise");
+      }
+      if (!this.date_naissance) {
+        this.errors.push("Date de naissance requise");
+      }
+      if (!this.email) {
+        this.errors.push("Email requis");
+      }
+      if (!this.adresse) {
+        this.errors.push("Adresse requise");
+      }
+      if (!this.telephone) {
+        this.errors.push("N° de téléphone requis");
+      }
+      if (!this.profession) {
+        this.errors.push("Profession requise");
+      }
+      if (!this.service) {
+        this.errors.push("Service requis");
+      }
+      if (!this.image) {
+        this.errors.push("Image requise");
+      } else {
+      this.postPersonnel();
+      }
+    },
     handleFiles: function() {
       var fichierSelectionne = document.getElementById("file").files[0];
       this.image = fichierSelectionne;
+      if (!this.image.name) {
+        return alert(
+          "Une erreur c'est produite pendant la selection de l'image, veuillez réessayer"
+        );
+      } else {
+        return alert(`Le fichier a bien été selectionné : ${this.image.name}`);
+      }
     },
     postPersonnel: async function() {
       let response = await fetch(
@@ -205,6 +269,7 @@ export default {
             Telephone: this.telephone,
             Profession: this.profession,
             Service: this.service,
+            CongesDispo: this.conges,
             Image: this.image.name,
             Status: this.status
           }),

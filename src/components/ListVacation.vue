@@ -1,5 +1,8 @@
 <template>
   <div class="mt-3">
+    <div class="row mt-3">
+      <p class="h1 text-right col-10 text-info mb-5">Ajouter des congés au personnel</p>
+    </div>
     <div>
       <img
         v-bind:src="this.Url+ this.image"
@@ -15,6 +18,7 @@
           <th scope="col">Nom :</th>
           <th scope="col">Proféssion :</th>
           <th scope="col">Service :</th>
+          <th scope="col">Congés Disponibles :</th>
         </tr>
       </thead>
       <tbody>
@@ -23,16 +27,11 @@
           <td>{{nom}}</td>
           <td>{{profession}}</td>
           <td>{{service}}</td>
+          <td>{{conges}}</td>
         </tr>
       </tbody>
     </table>
     <form @submit.prevent>
-      <div class="row mt-5">
-        <div class="col-2 offset-1">
-          <label>Ajoutez des Congés :</label>
-          <input type="number" class="form-control" v-model="conges" />
-        </div>
-      </div>
       <div class="row mt-5">
         <div class="col offset-2">
           <label>En Congés du :</label>
@@ -44,7 +43,7 @@
         </div>
       </div>
       <div class="row offset-2" id="buttongroup">
-        <button type="submit" class="btn btn-info col-2" @click="postConges()">Ajouter</button>
+        <button type="submit" class="btn btn-info col-2" @click="checkForm()">Ajouter</button>
         <button
           type="submit"
           class="btn btn-warning col-2 ml-5"
@@ -52,6 +51,12 @@
         >Annuler</button>
       </div>
     </form>
+       <p v-if="errors.length">
+      <b style="color :red">Veuillez corriger les erreurs suivantes :</b>
+      <ul>
+        <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+      </ul>
+    </p>
     <div class="col-1 float-right" id="grpancien">
       <p class="float-right text-right font-weight-bold" id="grpancien">Ancienneté</p>
       <br />
@@ -74,7 +79,7 @@
   margin-left: 33em;
 }
 #grpancien {
-  margin-top: -15vh;
+  margin-top: -1vh;
   margin-right: 7vh;
 }
 </style>
@@ -83,12 +88,13 @@
 import * as moment from "moment";
 import "moment/locale/pt-br";
 
-moment.locale("eu");
+moment.locale("fr");
 
 export default {
   name: "LisVacation",
   data: function() {
     return {
+      errors: [],
       prenom: null,
       nom: null,
       sécusociale: null,
@@ -127,11 +133,30 @@ export default {
     id: String
   },
   methods: {
+    checkForm: function() {
+      this.errors = [];
+      if (!this.debutconges) {
+        this.errors.push("Date de début de congés requise");
+      }
+      if (!this.finconges) {
+        this.errors.push("Date de fin de congés requise");
+      }
+      this.setCongesDispo();
+    },
     setCongesDispo: function() {
       let d1 = this.debutconges.split("-").join("");
+      console.log(d1);
       let d2 = this.finconges.split("-").join("");
       let res = d2 - d1;
-      this.conges - res;
+      if (res > this.conges) {
+        return alert(
+          "Le personnel ne dispose pas de jours de congés suffisants"
+        );
+      } else {
+        let result = this.conges - res;
+        this.conges = result;
+      }
+      this.postConges();
     },
     setStatus: function() {
       if (
@@ -173,21 +198,25 @@ export default {
           (this.conges = result.CongesDispo),
           (this.image = result.Image),
           (this.status = result.Status);
-      } catch (err) {
-        return alert("Erreur lors de la connexion a la base de données.");
-      }
+      } catch (err) {}
     },
     deleteConges: async function(id) {
+        if (
+        confirm(
+          "Voulez vous vraiment supprimer cet utilisateur ainsi que tout ces congés?"
+        )
+      ){
       let response = await fetch(
         `http://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/conges/${id}`,
         {
           method: "DELETE"
         }
       );
-      if (await response) {
-        this.getPersonnelLeave(this.id);
-      } else {
-        alert("La suppression a échoué");
+        if (await response) {
+          this.getPersonnelLeave(this.id);
+        } else {
+          alert("La suppression a échoué");
+        }
       }
     },
     postConges: async function() {
