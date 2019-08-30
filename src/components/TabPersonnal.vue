@@ -34,7 +34,7 @@
     <div class="col float-left ml-2 mt-4">
       <div class="row float-left mt-4">
         <a @click="$router.push({name: 'AddPersonnal' })">
-          <font-awesome-icon icon="plus-circle" style="font-size: 2.3em; color:orange;" />
+          <font-awesome-icon icon="plus-circle" style="font-size: 2.3em; color:#d5461e;" />
         </a>
         <span class="mt-2 ml-1">Ajout d'un membre du personnel</span>
       </div>
@@ -67,10 +67,10 @@
             @click.stop="$router.push({name: 'UpdatePersonnal' ,params : {id: `${personnel.Id}` }})"
             id="userEdit"
           >
-            <font-awesome-icon icon="user-edit" style="font-size: 1.2em; color:green;" />
+            <font-awesome-icon icon="user-edit" style="font-size: 1.2em; color:#22aa4a;" />
           </td>
           <td @click.stop="deletePersonnel(personnel.Id)" id="userDelete">
-            <font-awesome-icon icon="times" style="font-size: 1.2em; color:red;" />
+            <font-awesome-icon icon="times" style="font-size: 1.2em; color:#c20103;" />
           </td>
         </tr>
       </tbody>
@@ -87,25 +87,32 @@ th {
 }
 </style>
 <script>
+import * as moment from "moment";
+import "moment/locale/pt-br";
+
+moment.locale("eu");
+
 export default {
   name: "TabPersonnal",
   data: function() {
     return {
-      resultPersonnel: null,
+      resultPersonnel: [],
+      resultConges: [],
       enConges: false,
       dispo: false,
-      dispoClass: "bg-success",
-      congeClass: "bg-danger"
+      dateActuelle: moment().format("L")
     };
   },
   updated() {
     this.setColorBack();
   },
   created() {
+    this.getPersonnelLeave();
     this.getPersonnels();
   },
   watch: {
     $route: function() {
+      this.getPersonnelLeave();
       this.getPersonnels();
     }
   },
@@ -133,9 +140,9 @@ export default {
       let element = document.getElementsByClassName("persosStatus");
       for (let i = 0; i < element.length; i++) {
         if (element[i].textContent === "Disponible") {
-          element[i].style.backgroundColor = "#28a745";
+          element[i].style.backgroundColor = "#22aa4a";
         } else if (element[i].textContent === "En Congés") {
-          element[i].style.backgroundColor = "#dc3545";
+          element[i].style.backgroundColor = "#c20103";
         }
       }
     },
@@ -144,7 +151,7 @@ export default {
       for (let i = 0; i < this.resultPersonnel.length; i++) {
         if (this.resultPersonnel[i].Status != "Disponible") {
           const res = this.resultPersonnel.filter(
-            essai => essai.Status != "Disponible"
+            personnel => personnel.Status != "Disponible"
           );
           this.resultPersonnel = res;
         }
@@ -155,11 +162,20 @@ export default {
       for (let i = 0; i < this.resultPersonnel.length; i++) {
         if (this.resultPersonnel[i].Status != "En Congés") {
           const res = this.resultPersonnel.filter(
-            essai => essai.Status != "En Congés"
+            personnel => personnel.Status != "En Congés"
           );
           this.resultPersonnel = res;
         }
       }
+    },
+    getPersonnelLeave: async function() {
+      try {
+        let response = await fetch(
+          `https://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels_conges`
+        );
+        let result = await response.json();
+        this.resultConges = result;
+      } catch (err) {}
     },
     getPersonnels: async function() {
       try {

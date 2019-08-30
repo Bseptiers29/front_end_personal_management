@@ -10,7 +10,6 @@ import moment from "moment";
 
 import App from "./App.vue";
 import router from "./router";
-import "./assets/style/main.scss";
 
 library.add(faUserEdit);
 library.add(faPlusCircle);

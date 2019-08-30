@@ -122,10 +122,10 @@
         </div>
       </div>
       <div class="ml-5" id="form_end">
-        <div class="row ml-5">
-          <div class="col float-right ml-2 mr-5 mt-2">
-            <label class="btn btn-default btn-file float-right" for="file">
-              <font-awesome-icon icon="plus-circle" style="font-size: 2.3em; color:orange;" />
+        <div class="col ml-5">
+          <div class="col-2 float-right ml-2 mr-5 mt-2">
+            <label class=" row btn btn-default btn-file float-right" for="file">
+              <font-awesome-icon icon="plus-circle" style="font-size: 2.3em; color:#d5461e;" />
               <span class="ml-2">Ajouter une photo *</span>
               <input
                 id="file"
@@ -135,8 +135,8 @@
                 name="profiles"
               />
             </label>
-            <div class="col-2 float-right" id="InputConges">
-              <label>Congés :</label>
+            <div class="col float-right" id="InputConges">
+              <label class="col">Congés :</label>
               <input
                 type="number"
                 class="form-control"
@@ -148,18 +148,20 @@
           </div>
         </div>
       </div>
-      <i class="h6 mt-4 ml-1">* Champs requis</i>
-      <div class="row offset-2" id="buttongroup">
-        <button type="submit" class="btn btn-info col-1 ml-5" @click="checkForm()">Ajouter</button>
-        <button
-          type="submit"
-          class="btn btn-warning col-1 ml-5"
-          @click="$router.push({name: 'TabPersonnal' })"
-        >Annuler</button>
+      <div id="form_endgroup">
+        <i class="h6 mt-4 ml-1">* Champs requis</i>
+        <div class="row" id="buttongroup">
+          <button type="submit" class="btn btn-info col-1 ml-5 mt-5" @click="checkForm()">Ajouter</button>
+          <button
+            type="submit"
+            class="btn btn-warning col-1 ml-5 mt-5"
+            @click="$router.push({name: 'TabPersonnal' })"
+          >Annuler</button>
+        </div>
       </div>
     </form>
     <p v-if="errors.length">
-      <b style="color :red">Veuillez corriger les erreurs suivantes :</b>
+      <b class="mt-5" style="color :red">Veuillez corriger les erreurs suivantes :</b>
       <ul>
         <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
       </ul>
@@ -171,11 +173,12 @@
 #entrpgroup {
   width: 87%;
 }
-#form_end {
-  margin-top: -15vh;
+#form_endgroup {
+  margin-top: 15vh;
 }
 #buttongroup {
-  margin-top: 8vh;
+  margin-top: 5vh;
+  margin-left: 10vh;
 }
 </style>
 
@@ -241,7 +244,7 @@ export default {
         this.errors.push("Image requise");
       }
       if(!this.errors.length) {
-      this.updatePersonnel();
+      this.postPersonnel();
       }
     },
     handleFiles: function() {

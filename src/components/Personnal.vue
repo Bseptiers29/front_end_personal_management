@@ -116,20 +116,26 @@
           />
         </div>
       </div>
-      <div class="ml-5" id="form_end">
-        <div class="row ml-5">
-          <div class="col float-right ml-2 mr-5 mt-2">
-            <label class="btn btn-default btn-file float-right" for="file">
-              <font-awesome-icon icon="plus-circle" style="font-size: 2.3em; color:orange;" />
-              <span class="ml-2">Ajouter une photo*</span>
-              <input id="file" type="file" style="display: none;" @change="handleFiles()" />
+     <div class="ml-5" id="form_end">
+        <div class="col ml-5">
+          <div class="col-2 float-right ml-2 mr-5 mt-2">
+            <label class=" row btn btn-default btn-file float-right" for="file">
+              <font-awesome-icon icon="plus-circle" style="font-size: 2.3em; color:#d5461e;" />
+              <span class="ml-2">Ajouter une photo *</span>
+              <input
+                id="file"
+                type="file"
+                style="display: none;"
+                @change="handleFiles()"
+                name="profiles"
+              />
             </label>
-            <div class="col-2 float-right" id="InputConges">
-              <label>Congés :</label>
+            <div class="col float-right" id="InputConges">
+              <label class="col">Congés :</label>
               <input
                 type="number"
                 class="form-control"
-                placeholder="Congés"
+                placeholder="Congés Disponibles"
                 v-model="conges"
                 min="0"
               />
@@ -137,17 +143,19 @@
           </div>
         </div>
       </div>
-      <i class="h6 mt-4 ml-1">* Champs requis</i>
-      <div class="row offset-2" id="buttongroup">
-        <button type="submit" class="btn btn-info col-1 ml-5" @click="checkForm()">Modifier</button>
-        <button
-          type="submit"
-          class="btn btn-warning col-1 ml-5"
-          @click="$router.push({name: 'TabPersonnal' })"
-        >Annuler</button>
+       <div id="form_endgroup">
+        <i class="h6 mt-4 ml-1">* Champs requis</i>
+        <div class="row" id="buttongroup">
+          <button type="submit" class="btn btn-info col-1 ml-5 mt-5" @click="checkForm()">Ajouter</button>
+          <button
+            type="submit"
+            class="btn btn-warning col-1 ml-5 mt-5"
+            @click="$router.push({name: 'TabPersonnal' })"
+          >Annuler</button>
+        </div>
       </div>
     </form>
-     <p v-if="errors.length">
+     <p v-if="errors.length" class="ml-2">
       <b style="color :red">Veuillez corriger les erreurs suivantes :</b>
       <ul>
         <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
@@ -171,10 +179,17 @@
   margin-top: 6.6vh;
 }
 #imgpersos {
-  height: 32vh;
+  height: auto;
 }
 #InputService {
   margin-left: 1.5vh;
+}
+#form_endgroup {
+  margin-top: 15vh;
+}
+#buttongroup {
+  margin-top: 5vh;
+  margin-left: 10vh;
 }
 </style>
 

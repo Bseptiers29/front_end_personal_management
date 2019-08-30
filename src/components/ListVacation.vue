@@ -3,11 +3,11 @@
     <div class="row mt-3">
       <p class="h1 text-right col-10 text-info mb-5">Ajouter des congés au personnel {{prenom}} {{nom}}</p>
     </div>
-    <div>
+    <div id="imgDiv">
       <img
-        v-bind:src="this.Url+ this.image"
-        class="rounded float-right col-2 mr-5 img-thumbnail"
-        alt="photo du personnel"
+        class="rounded float-right col-2 mr-5 img-thumbnail img-fluid. max-width: 100%;"
+        alt="image du personnel"
+        v-bind:src="this.Url + this.image"
         id="imgpersos"
       />
     </div>
@@ -47,27 +47,35 @@
         <button
           type="submit"
           class="btn btn-warning col-2 ml-5"
-          @click="$router.push({name: 'TabPersonnal' })"
+          @click="postStatus()"
         >Annuler</button>
       </div>
     </form>
-       <p v-if="errors.length">
-      <b style="color :red">Veuillez corriger les erreurs suivantes :</b>
-      <ul>
-        <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
-      </ul>
-    </p>
     <div class="col-1 float-right" id="grpancien">
       <p class="float-right text-right font-weight-bold" id="grpancien">Ancienneté</p>
       <br />
       <span class="float-right text-right font-weight-light" id="grpancien">{{moment(anciennete).format('DD-MM-YYYY')}}</span>
     </div>
+    <p v-if="errors.length" class="mt-5 ml-2">
+      <b style="color :red">Veuillez corriger les erreurs suivantes :</b>
+      <ul>
+        <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+      </ul>
+    </p>
     <p class="h4 text-left col-10 text-info mt-5">Liste des congés du personnel</p>
+     <ul class="list-group list-group-flush col-3 ml-5" v-if="finconges">
+      <li class="list-group-item">
+        Du : {{moment(debutconges).format('DD-MM-YYYY')}} - Au : {{moment(finconges).format('DD-MM-YYYY')}}
+        <a @click="debutconges = '', finconges = ''">
+          <font-awesome-icon class="ml-5" icon="times" style="font-size: 1.2em; color:red;" />
+        </a>
+      </li>
+    </ul>
     <ul class="list-group list-group-flush col-3 ml-5" v-for="(conge) of result" :key="conge.Idc">
       <li class="list-group-item">
         Du : {{moment(conge.DebutConges).format('DD-MM-YYYY')}} - Au : {{moment(conge.FinConges).format('DD-MM-YYYY')}}
         <a @click="deleteConges(conge.Idc)">
-          <font-awesome-icon class="ml-5" icon="times" style="font-size: 1.2em; color:red;" />
+          <font-awesome-icon class="ml-5" icon="times" style="font-size: 1.2em; color:#c20103;" />
         </a>
       </li>
     </ul>
@@ -79,8 +87,11 @@
   margin-left: 33em;
 }
 #grpancien {
-  margin-top: -1vh;
+  margin-top: -0.9vh;
   margin-right: 7vh;
+}
+#imgpersos {
+  height: auto;
 }
 </style>
 
@@ -123,10 +134,14 @@ export default {
     this.getPersonnelLeave();
     this.getPersonnel();
   },
+  updated() {
+    this.setStatus();
+  },
   watch: {
     $route: function() {
       this.getPersonnelLeave();
       this.getPersonnel();
+      this.setStatus();
     }
   },
   props: {
@@ -141,32 +156,62 @@ export default {
       if (!this.finconges) {
         this.errors.push("Date de fin de congés requise");
       }
-      this.setCongesDispo();
+      if(!this.errors.length){
+        this.verifDates();
+      }
     },
-    setCongesDispo: function() {
-      let d1 = this.debutconges.split("-").join("");
-      console.log(d1);
-      let d2 = this.finconges.split("-").join("");
-      let res = d2 - d1;
-      if (res > this.conges) {
-        return alert(
-          "Le personnel ne dispose pas de jours de congés suffisants"
+    verifDates: function(){
+      var d1 = this.debutconges;
+      var d2 = this.finconges;
+      if (d1 > d2 || d1 === d2) {
+        alert(
+          "Les dates entrées ne sont pas valide, veuillez modifier vos champs"
         );
       } else {
-        let result = this.conges - res;
-        this.conges = result;
+      this.setCongesDispo();
       }
+    },
+    setCongesDispo: function() {
+      var now = moment(this.debutconges); //todays date
+      var end = moment(this.finconges); // another date
+      var duration = moment.duration(end.diff(now));
+      let days = duration._data.days + 1;
+      if(days > this.conges){
+        return alert("Le personnel ne dispose pas de jours de congés suffisants.")
+      } else {
+      let result = this.conges - days;
+      this.conges = result;
       this.postConges();
+      }
     },
     setStatus: function() {
       if (
-        this.dateActuelle < this.finconges &&
-        this.dateActuelle > this.debutconges
-      ) {
-        this.status = "En Congés";
-      } else {
-        this.status = "Disponible";
-      }
+        !this.result.length
+      ){
+        if(
+          this.dateActuelle < this.finconges &&
+          this.dateActuelle > this.debutconges ||
+          this.dateActuelle === this.finconges ||
+          this.dateActuelle === this.debutconges
+        ){
+          this.status = "En Congés";
+        } else {
+            this.status = "Disponible";
+        }
+      } else if (
+          this.dateActuelle < this.result[0].FinConges  &&
+          this.dateActuelle > this.result[0].DebutConges ||
+          this.dateActuelle < this.finconges &&
+          this.dateActuelle > this.debutconges ||
+          this.dateActuelle === this.result[0].FinConges ||
+          this.dateActuelle === this.result[0].DebutConges  ||
+          this.dateActuelle === this.finconges ||
+          this.dateActuelle === this.debutconges
+        )  {
+            this.status = "En Congés";
+          } else {
+            this.status = "Disponible";
+          }
     },
     getPersonnelLeave: async function() {
       try {
@@ -220,38 +265,7 @@ export default {
       }
     },
     postConges: async function() {
-      this.setStatus();
-      var d1 = this.debutconges;
-      var d2 = this.finconges;
-      if (d1 > d2) {
-        alert(
-          "Les dates entrées ne sont pas valide, veuillez modifier vos champs"
-        );
-      } else if (d1 == null && d2 == null) {
-        let res = await fetch(
-          `https://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`,
-          {
-            body: JSON.stringify({
-              Prenom: this.prenom,
-              Nom: this.nom,
-              SecuriteSociale: this.sécusociale,
-              Anciennete: this.anciennete,
-              Date_naissance: this.date_naissance,
-              Email: this.email,
-              Adresse: this.adresse,
-              Telephone: this.telephone,
-              Profession: this.profession,
-              Service: this.service,
-              CongesDispo: this.conges,
-              Image: this.image,
-              Status: this.status
-            }),
-            method: "PUT",
-            headers: this.headers
-          }
-        );
-        this.$router.push({ name: "TabPersonnal" });
-      } else {
+        this.setStatus();
         let response = await fetch(
           `https://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/conges`,
           {
@@ -264,7 +278,11 @@ export default {
             headers: this.headers
           }
         );
-        let res = await fetch(
+        this.postStatus();
+        this.$router.push({ name: "TabPersonnal" });
+    },
+    postStatus: async function() {
+      let res = await fetch(
           `https://app-c7edeb26-e069-443f-8987-b321e80adc7b.cleverapps.io/v1/personnels/${this.id}`,
           {
             body: JSON.stringify({
@@ -287,7 +305,6 @@ export default {
           }
         );
         this.$router.push({ name: "TabPersonnal" });
-      }
     }
   }
 };
